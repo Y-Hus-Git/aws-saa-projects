@@ -35,7 +35,7 @@ User Data Script
 
 To automate the server setup, I used a Bash script.
 
-[View the full User Data script here](./scripts/user_data.sh)
+[View the full User Data script here](aws-saa-projects/scripts/user_data.sh)
 
 
 
