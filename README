@@ -1,0 +1,65 @@
+Project Overview
+
+This project demonstrates how to securely host private content from Amazon S3 on an Amazon EC2 web server without using hardcoded credentials. 
+It focuses on the Security Pillar of the AWS Well-Architected Framework by implementing IAM Roles for service-to-service communication.
+
+Architecture
+
+- S3 Bucket: Stores a private image file (no public access).
+- IAM Role: Granted S3ReadOnlyAccess permissions.
+- EC2 Instance: Launched with the IAM Role attached (Instance Profile).
+- User Data: A bootstrap script that installs Apache and fetches the image via the AWS CLI.
+
+Implementation Steps
+
+1. Security & Identity (IAM)
+
+- Created an IAM Role for EC2.
+- Attached the managed policy AmazonS3ReadOnlyAccess.
+
+This allows the EC2 instance to fetch objects from S3 using temporary security tokens instead of permanent Access Keys.
+
+2. Storage (S3)
+
+- Created a private S3 bucket.
+- Uploaded my-image.png.
+- Verified that the object is not accessible via a public URL.
+
+3. Compute (EC2)
+
+- Launched a t2.micro instance using Amazon Linux 2023.
+- Configured Security Groups to allow HTTP (Port 80) traffic.
+- Applied the following User Data script to automate the setup:
+
+User Data Script
+
+To automate the server setup, I used the following Bash script:
+
+```bash
+#!/bin/bash
+# Update the OS
+yum update -y
+
+# Install and start Apache Web Server
+yum install -y httpd
+systemctl start httpd
+systemctl enable httpd
+
+# Copy the image from your private S3 bucket
+# Replace 'YOUR_BUCKET_NAME' with your actual bucket name
+aws s3 cp s3://YOUR_BUCKET_NAME/my-image.png /var/www/html/index.png
+
+# Create the webpage
+echo "<html><center><h1>S3 Integration Success!</h1><img src='index.png'></center></html>" > /var/www/html/index.html
+```
+
+
+Validation
+
+- Accessed the EC2 Public IPv4 address in a web browser.
+- Confirmed the image displays correctly, proving the EC2 instance successfully authenticated with S3 using its assigned Role.
+
+Cleanup
+
+- Terminated the EC2 instance.
+- Deleted the S3 bucket and IAM Role to avoid unnecessary costs.
