@@ -33,7 +33,11 @@ This allows the EC2 instance to fetch objects from S3 using temporary security t
 
 User Data Script
 
-To automate the server setup, I used a Bash script. [View the full User Data script here](./scripts/user_data.sh)
+To automate the server setup, I used a Bash script.
+
+[View the full User Data script here](./scripts/user_data.sh)
+
+
 
 
 Validation
